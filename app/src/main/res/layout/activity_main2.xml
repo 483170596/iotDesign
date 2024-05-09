@@ -645,19 +645,19 @@
 
                     <Button
                         android:id="@+id/btn_mode_in"
-                        android:visibility="visible"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="沉浸"
                         android:textColor="#000"
                         android:textSize="24sp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        android:visibility="visible" />
 
                     <Button
-                        android:layout_marginLeft="20dp"
                         android:id="@+id/btn_mode_out"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginLeft="20dp"
                         android:text="离家"
                         android:textColor="#000"
                         android:textSize="24sp"

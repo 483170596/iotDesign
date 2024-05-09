@@ -234,13 +234,16 @@ public class Main2Activity extends Activity {
         btn_in.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlarmOff();  //关报警
-
-                FanOff();    //关风扇
-
-                HardwareControler.StepperSetValue(1, 8);    //开窗帘左
-
-                LightOn();   //开灯
+//                AlarmOff();  //关报警
+//
+//                FanOff();    //关风扇
+//
+//                HardwareControler.StepperSetValue(1, 8);    //开窗帘左
+//
+//                LightOn();   //开灯
+                Intent intent = new Intent();
+                intent.setClass(Main2Activity.this, Main3Activity.class);
+                startActivity(intent);
             }
         });
     }

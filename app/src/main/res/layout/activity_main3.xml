@@ -4,9 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#76a5f0"
+    android:background="#0a1320"
     android:orientation="horizontal"
     tools:context=".Main3Activity">
+    <!--#dcdcce  #0a1320-->
 
     <LinearLayout
         android:layout_width="0dp"
@@ -14,6 +15,11 @@
         android:layout_weight="1"
         android:orientation="vertical">
 
+        <VideoView
+            android:id="@+id/videoView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp" />
 
     </LinearLayout>
 
@@ -23,6 +29,119 @@
         android:layout_weight="1"
         android:orientation="vertical">
 
+        <LinearLayout
+            android:id="@+id/clock"
+            android:onClick="onClick_Event"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_gravity="center"
+            android:visibility="visible">
+
+            <com.intl.fingerprintaccesscontrol.ClockView
+                android:layout_width="213dp"
+                android:layout_height="206dp"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="10dp"
+                app:mBigScaleColor="@android:color/black"
+                app:mCircleColor="@android:color/white"
+                app:mHourHandColor="@android:color/black"
+                app:mHourHandWidth="13dp"
+                app:mMiddlecaleColor="@android:color/black"
+                app:mMinuteHandColor="@android:color/black"
+                app:mMinuteHandWidth="8dp"
+                app:mSecondHandColor="@android:color/holo_blue_light"
+                app:mSecondHandWidth="5dp"
+                app:mSmallScaleColor="@android:color/holo_blue_dark"
+                app:mTextColor="@android:color/black"
+                app:mTextSize="16sp" />
+
+            <TextClock
+                android:id="@+id/timeText"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="3"
+                android:format12Hour="hh:mm"
+                android:format24Hour="HH:mm"
+                android:gravity="center"
+                android:textColor="@android:color/white"
+                android:textSize="40sp"
+                android:textStyle="bold" />
+
+            <TextClock
+                android:id="@+id/dateText"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:format12Hour="yyyy/MM/dd E"
+                android:format24Hour="yyyy/MM/dd E"
+                android:gravity="center"
+                android:textColor="@android:color/white"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/weather"
+            android:onClick="onClick_Event"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="183dp"
+                android:layout_marginTop="20dp"
+                android:src="@drawable/dhc" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="当前室温："
+                    android:textColor="#dcdcce"
+                    android:textSize="25dp" />
+
+                <TextView
+                    android:id="@+id/curtmp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="25"
+                    android:textColor="#dcdcce"
+                    android:textSize="25dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="℃"
+                    android:textColor="#dcdcce"
+                    android:textSize="25dp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/exit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginTop="20dp"
+            android:background="#4070c0"
+            android:onClick="onClick_Event"
+            android:text="退出"
+            android:textColor="#dcdcce"
+            android:textSize="10dp" />
     </LinearLayout>
 
 </LinearLayout>
