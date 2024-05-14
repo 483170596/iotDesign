@@ -34,7 +34,7 @@ import static com.intl.fingerprintaccesscontrol.HardwareControler.TrafficSetValu
 
 public class Main2Activity extends Activity {
 
-    private static final String TAG = "SmartHomeMain";
+    private static final String TAG = "Main2Activity";
     private static final int MAXBUFFLEN = 1024;
     private static final int INTERVAL4PROCESSINGBUFFDATA = 100;
     private Timer mTimer;
@@ -73,14 +73,17 @@ public class Main2Activity extends Activity {
     //todo 状态
     private boolean bBdLed = false;
     private boolean bBdTra = false;
+    private boolean bSegOpen = false, bSegTra = false, bMledOpen = false, bMledTra = false;
     private int tra_value = 0b000000000111; // 初始状态，只有1个灯是亮的
     private int tra_cnt = 1;
     private boolean tra_st = true;
     //todo 组件声明
-    private Button btn_bd_led, btn_out, btn_bd_tra;
+    private Button btn_bd_led, btn_out, btn_bd_tra, btn_seg_open, btn_seg_tra, btn_mled_open, btn_mled_tra;
     // todo 定时器 及 定时任务
     private Timer timer_for_tra = new Timer();
     private TimerTask timerTask_for_tra;
+
+    private Timer time_for_seg, timer_for_mled;
 
     private CheckBox check_shaker, check_humi;
 
@@ -176,7 +179,7 @@ public class Main2Activity extends Activity {
         }
         bBdTra = true;
         timer_for_tra = new Timer();
-        //todo 设置定时任务
+//         设置定时任务
         timerTask_for_tra = new TimerTask() {
             @Override
             public void run() {
@@ -216,6 +219,7 @@ public class Main2Activity extends Activity {
         btn_bd_tra.setTextColor(Color.RED);
     }
 
+    //todo tra回调
     private void bd_tra_off() {
         //关led
         Log.i(TAG, "led: 关流水灯");
@@ -228,6 +232,118 @@ public class Main2Activity extends Activity {
         btn_bd_tra.setTextColor(Color.GREEN);
 
         bBdTra = false;
+    }
+
+    //todo seg回调
+    private void segopen_on() {
+        if (bSegTra) {
+            Toast.makeText(getApplicationContext(), "请先关闭数码管", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        bSegOpen = true;
+        Log.i(TAG, "segopen_open:开seg ");
+        HardwareControler.SegSetValue(0, 16);
+        btn_seg_open.setText("关闭");
+        btn_seg_open.setTextColor(Color.RED);
+    }
+
+    //todo seg关
+    private void segopen_off() {
+        Log.i(TAG, "segopen_off: 关seg");
+        HardwareControler.TrafficSetValue(0, 256);
+        btn_seg_open.setText("打开");
+        btn_seg_open.setTextColor(Color.GREEN);
+        bSegOpen = false;
+    }
+
+    private int segtra_value = 0;
+
+    //todo seg tra开
+    private void segtra_on() {
+        if (bSegOpen) {
+            Toast.makeText(getApplicationContext(), "请先关闭数码管", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        bSegTra = true;
+        time_for_seg = new Timer();
+        time_for_seg.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                HardwareControler.SegSetValue(0, segtra_value);
+                segtra_value++;
+                if (segtra_value == 17) segtra_value = 0;
+            }
+        }, 500);
+        Log.i(TAG, "segtra_on: 开segtra");
+        btn_seg_tra.setText("关闭");
+        btn_seg_tra.setTextColor(Color.RED);
+    }
+
+    //todo seg tra关
+    private void segtra_off() {
+        Log.i(TAG, "segtra_off: 关segtra");
+        time_for_seg.cancel();
+        time_for_seg = null;
+        HardwareControler.SegSetValue(0, 128);
+        btn_seg_tra.setText("打开");
+        btn_seg_tra.setTextColor(Color.GREEN);
+        bSegTra = false;
+    }
+
+    //todo mled开
+    private void mledopen_on() {
+        if (bMledTra) {
+            Toast.makeText(getApplicationContext(), "请先关闭MLED", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        bMledOpen = true;
+        Log.i(TAG, "mledopen_on: 开mled");
+        HardwareControler.MatrixSetValue(0, 0xffff);
+        btn_mled_open.setText("关闭");
+        btn_mled_open.setTextColor(Color.RED);
+    }
+
+    //todo mled关
+    private void mledopen_off() {
+        Log.i(TAG, "mledopen_off: 关mled");
+        HardwareControler.MatrixSetValue(0, 0);
+        btn_mled_open.setText("打开");
+        btn_mled_open.setTextColor(Color.GREEN);
+        bMledOpen = false;
+    }
+
+    private int mled_value = 1;
+
+    //todo mledtra开
+    private void mledtra_on() {
+        if (bMledOpen) {
+            Toast.makeText(getApplicationContext(), "请先关闭MLED", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        bMledTra = true;
+        timer_for_mled = new Timer();
+        timer_for_mled.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                HardwareControler.MatrixSetValue(0, mled_value);
+                mled_value <<= 1;
+                if (mled_value == (1 << 17)) mled_value = 1;
+            }
+        }, 500);
+        Log.i(TAG, "mledtra_on: 开mledtra");
+        btn_mled_tra.setText("关闭");
+        btn_mled_tra.setTextColor(Color.RED);
+    }
+
+    //todo mledtra关
+    private void mledtra_off() {
+        Log.i(TAG, "mledtra_off: 关mledtra");
+        timer_for_mled.cancel();
+        timer_for_mled = null;
+        HardwareControler.MatrixSetValue(0, 0);
+        btn_mled_tra.setText("打开");
+        btn_mled_tra.setTextColor(Color.GREEN);
+        bMledTra = false;
     }
 
     private void inMode() {
@@ -255,10 +371,16 @@ public class Main2Activity extends Activity {
                 AlarmOff();         //关报警
 
                 FanOn();    //开风扇
+                new Timer().schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        FanOff();
+                    }
+                }, 5000);
 
                 HardwareControler.StepperSetValue(0, 8);    //关窗帘右
 
-                LightOff();   //关灯
+//                LightOff();   //关灯
 
                 //todo 关灯 延时关继电器 关定时器 跳转
                 if (bBdTra) bd_tra_off();
@@ -275,7 +397,7 @@ public class Main2Activity extends Activity {
                         HardwareControler.RelaySetValue(0, 0);
                         HardwareControler.RelaySetValue(1, 0);
                     }
-                }, 5100);
+                }, 3100);
 
                 finish();
             }
@@ -388,6 +510,10 @@ public class Main2Activity extends Activity {
         //todo 获取视图实例
         btn_bd_led = findViewById(R.id.btn_bd_led);
         btn_bd_tra = findViewById(R.id.btn_bd_tra);
+        btn_seg_open = findViewById(R.id.seg_open);
+        btn_seg_tra = findViewById(R.id.seg_tra);
+        btn_mled_open = findViewById(R.id.mled_open);
+        btn_mled_tra = findViewById(R.id.mled_tra);
 
         txt_lr_sun = (TextView) findViewById(R.id.txt_lr_sun);
         txt_lr_temp = (TextView) findViewById(R.id.txt_lr_temp);
@@ -455,6 +581,50 @@ public class Main2Activity extends Activity {
                     bd_tra_off();
                 } else {
                     bd_tra_on();
+                }
+            }
+        });
+
+        //todo 绑定时间seg
+        btn_seg_open.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (bSegOpen){
+                    segopen_off();
+                }else{
+                    segopen_on();
+                }
+            }
+        });
+        btn_seg_tra.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (bSegTra){
+                    segtra_off();
+                }else{
+                    segtra_on();
+                }
+            }
+        });
+
+        //todo 绑定事件mled
+        btn_mled_open.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (bMledOpen){
+                    mledopen_off();
+                }else{
+                    mledopen_on();
+                }
+            }
+        });
+        btn_bd_tra.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (bMledTra){
+                    mledtra_off();
+                }else{
+                    mledtra_on();
                 }
             }
         });

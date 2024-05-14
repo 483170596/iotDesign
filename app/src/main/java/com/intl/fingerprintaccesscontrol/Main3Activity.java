@@ -18,6 +18,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class Main3Activity extends Activity {
+    public static final String TAG = "Main3Activity";
     //todo 组件声明
     View clock;
     View weather;
@@ -61,26 +62,6 @@ public class Main3Activity extends Activity {
             }
         });
 
-        //todo 每1分钟获取1次温度
-        timer_tmp = new Timer();
-        timer_tmp.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                String str = "";
-                try {
-                    FileInputStream in = new FileInputStream("/dev/dht11_ctl");
-                    byte[] bytes = new byte[50];
-                    int iCount = in.read(bytes);
-                    if (iCount != -1) {
-                        str = new String(bytes, 0, iCount);
-                    }
-                    in.close();
-                } catch (Exception e) {
-                    Log.i("Humiture", "error!");
-                }
-                curtmp.setText(str);
-            }
-        }, 100);
     }
 
     @Override
